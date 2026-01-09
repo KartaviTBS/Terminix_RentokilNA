@@ -1,0 +1,28 @@
+{
+  "id": "591d9804-ab25-4282-a292-2f0243e7b4b1",
+  "name": "RentokilNA",
+  "publisher": "ArcherPoint",
+  "version": "1.0.20251118.233368",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "https://www.archerpoint.com",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "11.0.0.0",
+  "application": "11.0.0.0",
+  "idRanges": [
+    {
+      "from": 50000,
+      "to": 50599
+    }
+  ],
+  "showMyCode": true,
+  "runtime": "3.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}

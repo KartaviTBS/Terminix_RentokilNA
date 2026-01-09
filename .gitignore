@@ -1,0 +1,10 @@
+# AL extension
+**/launch.json
+Microsoft*.app
+ArcherPoint*.app
+AL/.vscode/.alcache/cache*.json
+scripts/ap-nav-docker/
+.docker
+app/.vscode/.alcache/cache*.json
+app/.vscode/Settings.json
+mheydasch

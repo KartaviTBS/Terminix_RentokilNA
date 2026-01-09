@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"path": "app"
+		},
+		{
+			"path": "test"
+		},
+		{
+			"path": "scripts"
+		},
+		{
+			"path": "install"
+		},
+		{
+			"path": "rapidstart"
+		},
+		{
+			"path": "database"
+		},
+		{
+			"path": ".docker"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"window.titleSeparator": " - ",
+		"window.title": "Rentokil${separator}${activeFolderLong}${separator}${dirty}${activeEditorShort}${separator}${appName}"
+	}
+}
