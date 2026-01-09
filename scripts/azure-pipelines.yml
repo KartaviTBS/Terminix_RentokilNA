@@ -1,0 +1,239 @@
+resources:
+- repo: self
+  clean: all
+
+name: 1.0.$(Date:yyyyMMdd).$(BuildID)
+variables:
+- group: gavpcdocker00
+- group: CertificateSigning
+- group: ArcherPointDevLicense2018
+- group: ArcherPointAppJson
+- group: SPO
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - '*'
+    exclude:
+    - README.md
+    - CRMTables.ps1
+    - Install.ps1
+    - .gitignore
+
+pr: none
+
+stages:
+- stage: build
+  jobs:
+  - job: build
+    pool:
+      name: gavpcdocker00
+    steps:
+    - powershell: |
+        Write-Host "##vso[task.setvariable variable=BuildPrefix]rentokil"
+
+        Write-Host "##vso[task.setvariable variable=imageName]ci"
+        Write-Host "##vso[task.setvariable variable=StorageAccount]bcartifacts"
+        Write-Host "##vso[task.setvariable variable=ArtifactType]onprem"
+        Write-Host "##vso[task.setvariable variable=ArtifactCountry]na"
+        Write-Host "##vso[task.setvariable variable=ArtifactVersion]11.0.27667.0"
+        Write-Host "##vso[task.setvariable variable=ArtifactSelect]Closest"
+
+        Write-Host "##vso[task.setvariable variable=isCIBuild]true"
+        Write-Host "##vso[task.setvariable variable=sourceControlFilesDirectory]$(build.sourcesDirectory)\app"
+        Write-Host "##vso[task.setvariable variable=useGitDiffForTxtImportFiles]false"
+        Write-Host "##vso[task.setvariable variable=importCALDirectory]$(build.sourcesDirectory)\Database\Objects\"
+        Write-Host "##vso[task.setvariable variable=appProjectFolder]$(appProjectFolder)\app"
+        Write-Host "##vso[task.setvariable variable=objectExportFilter]Modified=1"
+        Write-Host "##vso[task.setvariable variable=enableSymbolLoading]true"
+      displayName: 'Set Environment Variables'
+
+    - task: DeleteFiles@1
+      displayName: 'Delete files from $(Agent.BuildDirectory)\workingfolder\'
+      inputs:
+        SourceFolder: '$(Agent.BuildDirectory)\workingfolder\'
+        Contents: '**'
+
+    - task: UniversalPackages@0
+      displayName: 'Universal download'
+      inputs:
+        command: download
+        vstsFeed: 'scripts'
+        vstsFeedPackage: 'ap-nav-docker'
+        vstsPackageVersion: 1.0.*
+        downloadDirectory: '$(Agent.BuildDirectory)\apdockerscripts\'
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\docker-build.ps1
+      displayName: 'Docker Build'
+
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\ImportObjects.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\CompileObjects.ps1
+        Start-Sleep -s 15
+      displayName: 'Import/Compile C/AL'
+
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\CompileObjects.ps1 -filter "ID=112|496"
+        $(Agent.BuildDirectory)\apdockerscripts\Restart-NavContainer.ps1
+      displayName: 'Restart Container'
+
+    - powershell: |
+        #Write-Host "##vso[task.setvariable variable=useSqlAuthwithNav]false"
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\Generate-SymbolsInNavContainer.ps1
+      displayName: 'Generate Symbols'
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\Restart-NavContainer.ps1
+      displayName: 'Restart Container'
+
+    # - task: CopyFiles@2
+    #   displayName: 'Copy Dependencies to navappInstallDirectory'
+    #   inputs:
+    #     SourceFolder: '$(Build.SourcesDirectory)\AL\.alpackages'
+    #     Contents: |
+    #       *.app
+    #       !Microsoft**/*.app
+    #     TargetFolder: '$(Agent.BuildDirectory)\workingfolder\navAppInstallDirectory\'
+
+    # - powershell: |
+    #     $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+    #     $(Agent.BuildDirectory)\apdockerscripts\Publish-NavAppInContainer.ps1
+    #   displayName: 'Publish-NavAppInContainer Dependencies'
+
+    # - task: DeleteFiles@1
+    #   displayName: 'Delete files from $(Agent.BuildDirectory)\workingfolder\navAppInstallDirectory\'
+    #   inputs:
+    #     SourceFolder: '$(Agent.BuildDirectory)\workingfolder\navAppInstallDirectory\'
+    #     Contents: '**'
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        Start-Sleep -s 15
+        $(Agent.BuildDirectory)\apdockerscripts\Playbooks\run.playbook.copy-appjson-compile.ps1
+      displayName: 'Compile App'
+
+
+    - task: DownloadSecureFile@1
+      displayName: 'Download secure file - ArcherPointCodeSigning.pfx'
+      inputs:
+        secureFile: 'ArcherPointCodeSigning.pfx'
+
+
+
+
+
+    # - task: ExtractFiles@1
+    #   displayName: 'Extract files  - SignTool'
+    #   inputs:
+    #     archiveFilePatterns: '$(SignTool.secureFilePath)'
+    #     destinationFolder: '$(System.DefaultWorkingDirectory)\SignTool\'
+
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\CertificateSignAppExtension.ps1 -certificate $(Agent.TempDirectory)\ArcherPointCodeSigning.pfx -certificatePassword $(ArcherPointCodeSigningPassword)
+      displayName: 'Certificate Sign'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to navappInstallDirectory'
+      inputs:
+        SourceFolder: '$(Agent.BuildDirectory)\workingfolder\appProjectFolder\app\output\'
+        Contents: '*'
+        TargetFolder: '$(Agent.BuildDirectory)\workingfolder\navAppInstallDirectory\'
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\Publish-NavAppInContainer.ps1
+      displayName: 'Publish-NavAppInContainer'
+
+
+    - powershell: 'Write-Output ("##vso[build.addbuildtag]$(build.buildNumber)")'
+      displayName: 'Git Tag'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)/'
+      inputs:
+        SourceFolder: '$(Agent.BuildDirectory)\workingfolder\appProjectFolder\app\output\'
+        Contents: '*'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+      inputs:
+        SourceFolder: '$(Agent.BuildDirectory)\workingfolder\artifacts'
+        Contents: '*'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - powershell: 'Write-Output ("##vso[build.addbuildtag]$(build.buildNumber)")'
+      displayName: 'Git Tag'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/'
+        ArtifactName: app
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive $(Build.ArtifactStagingDirectory)/'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(BuildPrefix)-$(Build.BuildNumber).zip'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(BuildPrefix)-$(Build.BuildNumber).zip'
+        ArtifactName: artifacts
+
+    - powershell: |
+        $(Agent.BuildDirectory)\apdockerscripts\LoadCustomFunctions.ps1
+        $(Agent.BuildDirectory)\apdockerscripts\Remove-NAVContainer.ps1 AP-$(Build.BuildId)
+      displayName: 'Remove Container'
+      condition: always()
+
+- stage: deploy
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+  dependsOn: build
+  variables:
+  - group: CertificateSigning
+  - group: SPO
+  jobs:
+  - job: deploy
+    pool:
+      name: gavpcdocker00
+    steps:
+    - powershell: |
+        Write-Host "##vso[task.setvariable variable=spoLibPath]/Dev Builds/Customer/RENT/"
+      displayName: 'Set Environment Variables'
+
+    - task: UniversalPackages@0
+      displayName: 'Universal download'
+      inputs:
+        command: download
+        vstsFeed: 'scripts'
+        vstsFeedPackage: 'ap-nav-docker'
+        vstsPackageVersion: 1.0.17458
+        downloadDirectory: '$(Agent.BuildDirectory)\apdockerscripts\'
+
+    - download: current
+      artifact: app
+    - download: current
+      artifact: artifacts
+
+    - powershell: '$(Agent.BuildDirectory)\apdockerscripts\Upload-Sharepoint.ps1 -spoUser $(spoUser) -spoPassword $(spoPassword) -spoUploadFile "$(Agent.BuildDirectory)\artifacts\rentokil-$(Build.BuildNumber).zip"'
+      displayName: 'SPO Upload'
+      continueOnError: true

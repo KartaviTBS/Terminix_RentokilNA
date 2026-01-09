@@ -1,0 +1,1 @@
+az artifacts universal download --organization https://dev.azure.com/archerpoint --feed "custalpackages@Release" --name "att-bc" --version "1.0.*" --path ./
