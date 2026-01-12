@@ -76,8 +76,7 @@ codeunit 50005 "ARC Table 36 Subscribers"
             SalesHeader."ARC Expiration Date" := CalcDate(RNASetup."Quote Expiration Calculation", WorkDate);
         end;
         SalesHeader."ARC Created By" := CopyStr(UserId,1,MaxStrLen(SalesHeader."ARC Created By"));
-        if SalesHeader."Document Type" = SalesHeader."Document Type"::Order then
-            SalesHeader.Validate("Requested Delivery Date", CalculateBusinessDaysAfter(SalesHeader."Posting Date",2));
+        SalesHeader.Validate("Requested Delivery Date", CalculateBusinessDaysAfter(SalesHeader."Posting Date",2));
     end;
 
     [EventSubscriber(ObjectType::Table, 36, 'OnBeforeModifyEvent', '', false, false)]
