@@ -116,26 +116,6 @@ table 50083 "ARC eCommerce Entry"
         {
             DataClassification = CustomerContent;
         }
-        field(3100; "eCom. eBiz Cust. Token"; Text[20])
-        {
-            DataClassification = CustomerContent;
-            Caption = 'eCommerce eBiz Cust. Token';
-        }
-        field(3101; "eCom. eBiz Pmt. Token"; Text[20])
-        {
-            DataClassification = CustomerContent;
-            Caption = 'eCommerce eBiz Pmt. Token';
-        }   
-        field(3102;"eCom. eBiz CC Last4";Text[20])
-        {
-            Caption = 'eCommerce eBiz CC_Last4';
-            DataClassification = CustomerContent;
-        }
-        field(3103;"eCom. eBiz Last4";Text[20])
-        {
-            Caption = 'eCommerce eBiz Last4';
-            DataClassification = CustomerContent;
-        }     
         field(3991; "eCom Bypass Price/Promo"; Boolean)
         {
             DataClassification = CustomerContent;

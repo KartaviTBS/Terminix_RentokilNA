@@ -145,10 +145,6 @@ tableextension 50001 "ARC Item" extends Item
             CalcFormula = lookup ("ARC Agency"."Payment Terms Code" where (Code = FIELD ("ARC Agency Code")));
             Editable = false;
         }
-        field(50063; "Updated In 2Ship"; Boolean)
-        {
-            Caption = 'Updated In 2Ship';           
-        }
     }
 
     local procedure ValidateRegulatory();

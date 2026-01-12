@@ -90,15 +90,9 @@ codeunit 50078 "ARC OrderManagement"
         _SalesHeaderOrig.Get(_OrderTranslationEntry."Document Type",_OrderTranslationEntry."Document No.");
         _SalesHeaderOrig.SetRecFilter();
         Split(_OrderTranslationEntry,_SalesHeaderOrig,_logText);
-        SplitOrderEFTDelete(_SalesHeaderOrig,_logText);
         _ArchiveMgt.ArchSalesDocumentNoConfirm(_SalesHeaderOrig);
-        if RNASetup."Disable Batch Deletion_OrdMgt" then begin
-            _SalesHeaderOrig.SetHideValidationDialog(true);
-            _SalesHeaderOrig.LockTable();
-            _SalesHeaderOrig.Get(_OrderTranslationEntry."Document Type",_OrderTranslationEntry."Document No.");
-            _SalesHeaderOrig.Delete(true);
-        end else
-            InsertDeletionRequest(_OrderTranslationEntry."Document No.");
+        _SalesHeaderOrig.SetHideValidationDialog(true);
+        _SalesHeaderOrig.Delete(true);
         _timeEnd := Time();
         _OrderTranslationEntry2.LockTable();
         _OrderTranslationEntry2.Get(_OrderTranslationEntry."Entry No.");
@@ -118,30 +112,6 @@ codeunit 50078 "ARC OrderManagement"
             exit(false);
         exit(Confirm(_Text000Qst,false));
     end;
-
-    // snippet to Saketh - Order Translation to include eBiz [monday ref 7707815069] -- MHE BEGIN
-    local procedure CopyEBiz(SalesHeaderOrig: Record "Sales Header"; SalesHeaderForRelease: Record "Sales Header"; var _logText: BigText)
-    var
-        EBizTable: Record 14039680;
-        EBizTable2: Record 14039680;
-        text099Lbl: Label 'Method CopyEBiz(): %1';
-    begin
-        _logText.AddText(StrSubstNo(text099Lbl,'begin') + CRNL);
-        _logText.AddText(StrSubstNo(text099Lbl,'SalesHeaderOrig: ' + SalesHeaderOrig."No.") + CRNL);
-        _logText.AddText(StrSubstNo(text099Lbl,'SalesHeaderForRelease: ' + SalesHeaderForRelease."No.") + CRNL);
-        EBizTable.SetRange("Document Type",EBizTable."Document Type"::Order);
-        EBizTable.SetRange("No.",SalesHeaderOrig."No.");
-        if not EBizTable.FindFirst() then 
-            _logText.AddText(StrSubstNo(text099Lbl,'EBizTable record not found using filters: ' + EBizTable.GetFilters()) + CRNL)
-        else begin
-            EBizTable2 := EBizTable;
-            EBizTable2."No." := CopyStr(SalesHeaderForRelease."No.",1,MaxStrLen(EBizTable2."No."));
-            if not EBizTable2.Insert() then 
-                _logText.AddText(StrSubstNo(text099Lbl,'Unable to insert EBizTable record') + CRNL);
-        end;
-        _logText.AddText(StrSubstNo(text099Lbl,'end') + CRNL);
-    end;
-    // snippet to Saketh - modify Order Translation to include eBiz [monday ref 7707815069] -- MHE END
 
     local procedure eCommerceOrigin(
         SalesHeader: Record "Sales Header";
@@ -302,8 +272,6 @@ codeunit 50078 "ARC OrderManagement"
             exit;
         if not RNASetup."Order Management Active" then
             exit;
-        if HasOrderTranslateExist(SalesHeader) and (not RNASetup."Disable Batch Deletion_OrdMgt") then
-            exit;              
         if RNASetup."Order Mgt. Handle EFT Txs." then begin
             // credit card orders sourced by Adobe Commerce must not be split - email fr Jennifer Gunter dated Tue 23 Apr 2024 at 1430 Eastern
             logText.AddText(StrSubstNo(text099Lbl,'Order Mgt. Handle EFT Txs. is Yes in RNA Setup, evaluating eCommerceOrigin and attachedEFTTrans to bypass split') + CRNL);
@@ -824,7 +792,7 @@ codeunit 50078 "ARC OrderManagement"
                     _PlacardCodeExist := _PlacardCodeExist or (_BOL."Placard Code" <> '');
                 */
             end;
-            //_boo3 := _PlacardCodeExist; //SK1.0
+            _boo3 := _PlacardCodeExist;
             // agency item
             _boo1 := _Item."ARC Agency Item";
             _cod1 := CopyStr(_Item."ARC Agency Code",1,MaxStrLen(_cod1));
@@ -857,7 +825,6 @@ codeunit 50078 "ARC OrderManagement"
         _Item: Record Item;
         _NoSeriesMgt: Codeunit NoSeriesManagement;
         _AgencyItem: Boolean;
-        EFTTxsForHeaderCopied: Boolean;
         _HazmatItem: Boolean;
         _KorberEnabled: Boolean;
         _SalesCommentsForHeaderCopied: Boolean;
@@ -939,10 +906,6 @@ codeunit 50078 "ARC OrderManagement"
                                 SplitOrderLineComments(_SalesLineForRelease,_SalesLineForComments);
                                 _SalesCommentsForHeaderCopied := true;
                             end;
-                            if not EFTTxsForHeaderCopied then begin
-                                SplitOrderEFTCopy(_SalesHeaderOrig,_SalesHeaderForRelease,_logText);
-                                EFTTxsForHeaderCopied := true;
-                            end;
                             SplitLinesAttached(_SalesLineForRelease,_SalesLineOrig);
                             _textDesc := StrSubstNo(_Text003Lbl,_SalesLineForRelease."Line No.",_SalesLineForRelease."Location Code",
                                 _SalesLineForRelease.Type,_SalesLineForRelease."No.",_SalesLineForRelease.Quantity,_SalesLineForRelease.Description);
@@ -991,9 +954,6 @@ codeunit 50078 "ARC OrderManagement"
                 _SalesCommentsForHeaderCopied := false;
                 _SalesHeaderLocDimsAligned := false;  // LocationFreightBilling - Cody Weeks email dated Thu 18 May 2023 at 1003am Eastern
                 _SalesHeaderForRelease.Modify();
-                // snippet to Saketh - modify Order Translation to include eBiz [monday ref 7707815069] -- MHE BEGIN
-                CopyEBiz(_SalesHeaderOrig,_SalesHeaderForRelease,_logText);
-                // snippet to Saketh - modify Order Translation to include eBiz [monday ref 7707815069] -- MHE END
             until _tempBufGroup.Next() = 0;
         _logText.AddText(CRNL + StrSubstNo(_Text004Lbl,_linesReassigned) + CRNL);
     end;
@@ -1033,86 +993,6 @@ codeunit 50078 "ARC OrderManagement"
             until _SalesCommentLineOrig.Next() = 0;
     end;
 
-    local procedure SplitOrderEFTCopy(
-        SalesHeaderOrig: Record "Sales Header"; 
-        SalesHeaderForRelease: Record "Sales Header";
-        var _logText: BigText)
-    var
-        EFTTrans: Record "EFT Transaction -CL-";
-        EFTTrans2: Record "EFT Transaction -CL-";
-        recsCopied: Integer;
-        text000Lbl: Label 'storeNo %1, terminalNo %2, entryNo %3';
-        text099Lbl: Label 'Method SplitOrderEFTCopy(): %1';
-    begin
-        _logText.AddText(StrSubstNo(text099Lbl,'begin') + CRNL);
-        if not RNASetup."Order Mgt. Handle EFT Txs." then begin
-            _logText.AddText(StrSubstNo(text099Lbl,'Order Mgt. Handle EFT Txs. is No in RNA Setup (exit)') + CRNL);
-            exit;
-        end;
-        EFTTrans.SetCurrentKey("Document Type","Document No.","Method Code");
-        EFTTrans.SetRange("Document Type",EFTTrans."Document Type"::Order);
-        EFTTrans.SetRange("Document No.",SalesHeaderOrig."No.");
-        _logText.AddText(StrSubstNo(text099Lbl,'EFT Transaction Filters: ' + EFTTrans.GetFilters()) + CRNL);
-        _logText.AddText(StrSubstNo(text099Lbl,'EFT Transaction Count(): ' + Format(EFTTrans.Count())) + CRNL);
-        if not EFTTrans.FindSet(false) then begin
-            _logText.AddText(StrSubstNo(text099Lbl,'EFT Transaction FindSet(false) failed (exit)') + CRNL);
-            exit;
-        end else
-            repeat
-                // priKey: Store No.,Terminal No.,Entry No.
-                _logText.AddText(StrSubstNo(text099Lbl,StrSubstNo(text000Lbl,EFTTrans."Store No.",
-                    EFTTrans."Terminal No.",Format(EFTTrans."Entry No."))) + CRNL);
-                EFTTrans2.SetRange("Store No.",EFTTrans."Store No.");
-                EFTTrans2.SetRange("Terminal No.",EFTTrans."Terminal No.");
-                EFTTrans2.LockTable();
-                if not EFTTrans2.FindLast() then begin
-                    _logText.AddText(StrSubstNo(text099Lbl,'EFTTrans2.FindLast() with updLock failed (abort)') + CRNL);
-                    exit;
-                end else begin
-                    EFTTrans2 := EFTTrans;
-                    EFTTrans2."Entry No." := EFTTrans2."Entry No." + 1;
-                    EFTTrans2."Document No." := CopyStr(SalesHeaderForRelease."No.",1,MaxStrLen(EFTTrans2."Document No."));
-                    if not EFTTrans2.Insert() then begin
-                        _logText.AddText(StrSubstNo(text099Lbl,'EFTTrans2.Insert() failed (abort)') + CRNL);
-                        EFTTrans2.Reset();
-                        Clear(EFTTrans2);
-                        exit;
-                    end;
-                end;
-                EFTTrans2.Reset();
-                Clear(EFTTrans2);
-                recsCopied += 1;
-            until EFTTrans.Next() = 0;
-        _logText.AddText(StrSubstNo(text099Lbl,'EFT Transaction records copied: ' + Format(recsCopied)) + CRNL);
-        _logText.AddText(StrSubstNo(text099Lbl,'end') + CRNL);
-    end;
-
-    local procedure SplitOrderEFTDelete(
-        SalesHeaderOrig: Record "Sales Header";
-        var _logText: BigText)
-    var
-        EFTTrans: Record "EFT Transaction -CL-";
-        text099Lbl: Label 'Method SplitOrderEFTDelete(): %1';
-    begin
-        _logText.AddText(StrSubstNo(text099Lbl,'begin') + CRNL);
-        if not RNASetup."Order Mgt. Handle EFT Txs." then begin
-            _logText.AddText(StrSubstNo(text099Lbl,'Order Mgt. Handle EFT Txs. is No in RNA Setup (exit)') + CRNL);
-            exit;
-        end;
-        EFTTrans.SetCurrentKey("Document Type","Document No.","Method Code");
-        EFTTrans.SetRange("Document Type",EFTTrans."Document Type"::Order);
-        EFTTrans.SetRange("Document No.",SalesHeaderOrig."No.");
-        _logText.AddText(StrSubstNo(text099Lbl,'EFT Transaction Filters: ' + EFTTrans.GetFilters()) + CRNL);
-        _logText.AddText(StrSubstNo(text099Lbl,'EFT Transaction Count(): ' + Format(EFTTrans.Count())) + CRNL);
-        if EFTTrans.FindSet(true) then begin
-            EFTTrans.DeleteAll();
-            _logText.AddText(StrSubstNo(text099Lbl,'records deleted') + CRNL);
-        end;
-        EFTTrans.Reset();
-        Clear(EFTTrans);
-        _logText.AddText(StrSubstNo(text099Lbl,'end') + CRNL);
-    end;
-
     local procedure TestItems(_SalesHeader: Record "Sales Header")
     var
         _SalesLine: Record "Sales Line";
@@ -1139,26 +1019,4 @@ codeunit 50078 "ARC OrderManagement"
         _EventLogEntry.NewEventLogEntry(EventLogLabel,_EventLogEntry."Object Type"::Codeunit,Codeunit::"ARC OrderManagement",
             _status,_relatedEntryNo,_msg,_err,false,'');
     end;
-    local procedure InsertDeletionRequest(salesOrderNo: Code[20])
-    var
-        DeletionEntry: Record "ARC Deletion Entry";
-    Begin
-        DeletionEntry.Init();
-        DeletionEntry."Entry No." := 0;
-        DeletionEntry."Document No." := CopyStr(salesOrderNo,1,MaxStrLen(DeletionEntry."Document No."));
-        DeletionEntry."Created at DateTime" := CurrentDateTime();
-        DeletionEntry.Insert(true);
-    end;  
-
-    local procedure HasOrderTranslateExist(var SalesHeader: Record "Sales Header"):Boolean
-    var
-        _OrderTranslationEntry: Record "ARC Order Translation Entry";
-    begin
-        _OrderTranslationEntry.Reset();
-        _OrderTranslationEntry.SetRange("Document Area",_OrderTranslationEntry."Document Area"::Sales);
-        _OrderTranslationEntry.SetRange("Document Type",SalesHeader."Document Type");
-        _OrderTranslationEntry.SetRange("Document No.",SalesHeader."No.");       
-        _OrderTranslationEntry.SetRange(Analyze,true);     
-        exit(not _OrderTranslationEntry.IsEmpty());
-    end;      
 }

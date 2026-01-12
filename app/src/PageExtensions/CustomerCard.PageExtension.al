@@ -7,12 +7,8 @@ pageextension 50042 "ARC Customer Card" extends "Customer Card"
             field("Name 2"; Rec."Name 2")
             {
                  ApplicationArea = All;
-            }  
-            field(Priority_Korber;Priority_Korber)          
-            {
-                ApplicationArea = all;
-            }
-        }       
+            }            
+        }
             
         addlast(General)
         {

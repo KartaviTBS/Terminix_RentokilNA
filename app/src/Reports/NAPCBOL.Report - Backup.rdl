@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <DataSources>
+    <DataSource Name="DataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <Height>2in</Height>
+        <Style />
+      </Body>
+      <Width>6.5in</Width>
+      <Page>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="PackagesNoCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>PackagesNoCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>PackagesNoCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="UOMCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>UOMCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>UOMCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="HMCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>HMCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>HMCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DescriptionCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>DescriptionCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>DescriptionCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TotalLBSCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>TotalLBSCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>TotalLBSCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="BOLCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>BOLCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>BOLCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="BillOfLadingHeader">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>BillOfLadingHeader</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>BillOfLadingHeader</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="CertifyText">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>CertifyText</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>CertifyText</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="RecommendText">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>RecommendText</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>RecommendText</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="InstructionText">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>InstructionText</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>InstructionText</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DomesticEmerText">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>DomesticEmerText</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>DomesticEmerText</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <Code>Public Function BlankZero(ByVal Value As Decimal)
+    if Value = 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankPos(ByVal Value As Decimal)
+    if Value &gt; 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankZeroAndPos(ByVal Value As Decimal)
+    if Value &gt;= 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankNeg(ByVal Value As Decimal)
+    if Value &lt; 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankNegAndZero(ByVal Value As Decimal)
+    if Value &lt;= 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+</Code>
+  <Language>=User!Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportID>0eeb6585-38ae-40f1-885b-8d50088d51b4</rd:ReportID>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <DataSets>
+    <DataSet Name="DataSet_Result">
+      <Fields>
+        <Field Name="No_ShipmentHeader">
+          <DataField>No_ShipmentHeader</DataField>
+        </Field>
+        <Field Name="ShipToAddress1">
+          <DataField>ShipToAddress1</DataField>
+        </Field>
+        <Field Name="ShipToAddress2">
+          <DataField>ShipToAddress2</DataField>
+        </Field>
+        <Field Name="ShipToAddress3">
+          <DataField>ShipToAddress3</DataField>
+        </Field>
+        <Field Name="ShipToAddress4">
+          <DataField>ShipToAddress4</DataField>
+        </Field>
+        <Field Name="ShipToAddress5">
+          <DataField>ShipToAddress5</DataField>
+        </Field>
+        <Field Name="ShipToAddress6">
+          <DataField>ShipToAddress6</DataField>
+        </Field>
+        <Field Name="ShipToAddress7">
+          <DataField>ShipToAddress7</DataField>
+        </Field>
+        <Field Name="ShipToAddress8">
+          <DataField>ShipToAddress8</DataField>
+        </Field>
+        <Field Name="ShipFromAddress1">
+          <DataField>ShipFromAddress1</DataField>
+        </Field>
+        <Field Name="ShipFromAddress2">
+          <DataField>ShipFromAddress2</DataField>
+        </Field>
+        <Field Name="ShipFromAddress3">
+          <DataField>ShipFromAddress3</DataField>
+        </Field>
+        <Field Name="ShipFromAddress4">
+          <DataField>ShipFromAddress4</DataField>
+        </Field>
+        <Field Name="ShipFromAddress5">
+          <DataField>ShipFromAddress5</DataField>
+        </Field>
+        <Field Name="ShipFromAddress6">
+          <DataField>ShipFromAddress6</DataField>
+        </Field>
+        <Field Name="ShipFromAddress7">
+          <DataField>ShipFromAddress7</DataField>
+        </Field>
+        <Field Name="ShipFromAddress8">
+          <DataField>ShipFromAddress8</DataField>
+        </Field>
+        <Field Name="BOLHeaderNo_">
+          <DataField>BOLHeaderNo_</DataField>
+        </Field>
+        <Field Name="LineQty">
+          <DataField>LineQty</DataField>
+        </Field>
+        <Field Name="LineQtyFormat">
+          <DataField>LineQtyFormat</DataField>
+        </Field>
+        <Field Name="Unit_of_Measure_Code">
+          <DataField>Unit_of_Measure_Code</DataField>
+        </Field>
+        <Field Name="HazMat">
+          <DataField>HazMat</DataField>
+        </Field>
+        <Field Name="FirstDesc">
+          <DataField>FirstDesc</DataField>
+        </Field>
+        <Field Name="Line_Weight">
+          <DataField>Line_Weight</DataField>
+        </Field>
+        <Field Name="Line_WeightFormat">
+          <DataField>Line_WeightFormat</DataField>
+        </Field>
+        <Field Name="NAPC_BOL_Code">
+          <DataField>NAPC_BOL_Code</DataField>
+        </Field>
+        <Field Name="Comment">
+          <DataField>Comment</DataField>
+        </Field>
+        <Field Name="PlacardText">
+          <DataField>PlacardText</DataField>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>DataSource</DataSourceName>
+        <CommandText />
+      </Query>
+    </DataSet>
+  </DataSets>
+</Report>

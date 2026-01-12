@@ -8,14 +8,6 @@ pageextension 50068 "ARC Vendor Card" extends "Vendor Card"
             {
                 ApplicationArea = All;
             }
-            field("W9 Name";"W9 Name")
-            {
-                ApplicationArea = all;                
-            }
-            field("Exclude From Remittance";"Exclude From Remittance")
-            {
-                ApplicationArea = all;
-            }
         }
     }
 }

@@ -84,27 +84,6 @@ page 50001 "ARC RNA Setup"
                 {
                     ApplicationArea = All;
                 }
-                field("JDE AP Export File Path";"JDE AP Export File Path")
-                {
-                    ApplicationArea = all;
-                }
-                field("JDE AP Last Export File Name";"JDE AP Last Export File Name")
-                {
-                    ApplicationArea = all;
-                }
-                field("JDE GL Export File Path";"JDE GL Export File Path")
-                {
-                    ApplicationArea = all;
-                }
-                field("JDE Last Export File Name";"JDE Last Export File Name")
-                {
-                    ApplicationArea = all;
-                }
-                field("Disable Batch Deletion_OrdMgt"; Rec."Disable Batch Deletion_OrdMgt")
-                {
-                    ApplicationArea = All;
-                }
-                
             }
             group("Sales & Pricing")
             {
@@ -429,24 +408,6 @@ page 50001 "ARC RNA Setup"
                     ApplicationArea = All;
                     ToolTip = 'Specifies how many leading characters of the eCommerce Order ID should be stripped';
                 }
-            }
-        }
-    }
-    actions
-    {
-        area(Processing)
-        {
-            action(ExportJDEAP)
-            {
-                ApplicationArea = All;
-                Image = ExportAttachment;
-                RunObject = codeunit "Export AP Details to JDE TEST";               
-            }
-             action(ExportJDEGL)
-            {
-                ApplicationArea = All;
-                Image = ExportAttachment;            
-                RunObject = codeunit "Export GL Details to JDE TEST";               
             }
         }
     }

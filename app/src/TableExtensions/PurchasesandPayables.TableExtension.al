@@ -23,16 +23,6 @@ tableextension 50062 "ARC Purchases & Payables Setup" extends "Purchases & Payab
             Caption = 'AP Sweep Bal. Account No.';
             TableRelation = "G/L Account";
         }
-        field(50000; "JDE AP Export File Path"; Text[250])
-        {
-            Caption = 'JDE AP Export File Path';
-            
-        }
-        field(50001; "JDE Last Export File Name"; Text[250])
-        {
-            Caption = 'JDE Last Export File Name';
-            
-        }
 
     }
 

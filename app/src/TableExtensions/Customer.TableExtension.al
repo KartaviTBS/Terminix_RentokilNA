@@ -149,11 +149,6 @@ tableextension 50009 "ARC Customer" extends Customer
         {
             Caption = 'PestPac Customer ID';        
         }
-        field(50101; "Priority_Korber"; Code[20])
-        {
-            DataClassification = CustomerContent;
-            Caption = 'Priority_Korber';
-        }        
         field(60001;"ARC Credit Control";Boolean)
         {
            Caption = 'Credit Control';

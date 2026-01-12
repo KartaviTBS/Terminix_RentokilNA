@@ -329,15 +329,6 @@ table 50033 "ARC Price Entry"
         {
 
         }
-        key(Key3; "Entity Type", "Type", "No.", "Unit of Measure Code", "Variant Code", "Currency Code", "Status", "Effective Date", "Expiration Date")
-{
-         MaintainSQLIndex = true;
-}
-        key(Key4; "Entity Type", "No.", "Unit of Measure Code", "Effective Date", "Expiration Date", "Status")
-{
-        MaintainSQLIndex = true;
-}
-
     }
 
     var

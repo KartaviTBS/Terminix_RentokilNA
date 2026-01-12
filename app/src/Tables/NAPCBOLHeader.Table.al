@@ -539,10 +539,6 @@ table 50037 "ARC NAPC BOL Header"
         key(Key1;"No.")
         {
         }
-        key(key2;"Source Doc. Type","Source Doc. No.")  // SK 1.0 (Archer point index changes)
-        {
-          MaintainSQLIndex=true;
-        }
     }
 
     fieldgroups

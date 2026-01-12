@@ -12,14 +12,6 @@ tableextension 50022 "ARC G/L Entry" extends "G/L Entry"
         {
             Caption = 'Workwave Entry No.';
         }
-        field(50003; "Exported To JDE"; Boolean)
-        {
-            Caption = 'Exported To JDE';
-        }
-        field(50004; "Shortcut Dimension 3 Code"; Code[20])
-        {
-            Caption = 'Shortcut Dimension 3 Code';            
-        }
     }
     
     var
