@@ -8,24 +8,23 @@ pageextension 50053 "ARC Posted Sales Invoice" extends "Posted Sales Invoice"
             {
                 ApplicationArea = All;
             }
-            group("2Ship Integration")
-            {
-                Caption = '2Ship';
-                Editable = false;
-                field("2Ship Label Link"; Rec."2Ship Label Link")
-                {
-                    ApplicationArea = All;
-                }
-                field("2Ship BOL Link"; Rec."2Ship BOL Link")
-                {
-                    ApplicationArea = All;
-                }
-                field("2Ship Tracking No."; Rec."2Ship Tracking No.")
-                {
-                    ApplicationArea = All;
-                }                            
-            }
             
+        }
+           addafter("Sell-to City")
+        {
+            field("Sell-to Territory Code"; Rec."Sell-to Territory Code")
+            {
+                ApplicationArea = All;
+            }            
+        }
+          addbefore("Location Code")
+        {
+            field("Bill-to Territory Code"; Rec."Bill-to Territory Code")
+            {
+                Enabled = "Bill-to Customer No." <> "Sell-to Customer No.";
+                Editable = "Bill-to Customer No." <> "Sell-to Customer No.";
+                ApplicationArea = All;
+            }            
         }
     }
 

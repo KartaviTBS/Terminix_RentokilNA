@@ -27,14 +27,5 @@ tableextension 50041 "ARC General Ledger Setup" extends "General Ledger Setup"
             DataClassification = CustomerContent;
             Caption = 'Job Queue Credential';
         }
-        field(50000; "JDE GL Export File Path"; Text[250])
-        {
-            Caption = 'JDE GL Export File Path'; 
-
-        }
-        field(50001; "JDE Last Export File Name"; Text[250])
-        {
-            Caption = 'JDE Last Export File Name';
-        }
     }
 }

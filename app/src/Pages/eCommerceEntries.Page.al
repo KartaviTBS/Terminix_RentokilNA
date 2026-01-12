@@ -166,18 +166,6 @@ page 50183 "ARC eCommerce Entries"
                     ApplicationArea = All;
                     ToolTip = 'Specifies eCom Group Count';
                 }
-                field("eCom. eBiz Cust. Token";"eCom. eBiz Cust. Token")
-                {
-                    ApplicationArea = All;
-                }
-                field("eCom. eBiz Pmt. Token";"eCom. eBiz Pmt. Token")
-                {
-                    ApplicationArea = All;
-                }
-                field("eCom. eBiz Last4";"eCom. eBiz Last4")
-                {
-                    ApplicationArea = All;
-                }
                 field("Created by"; Rec."Created by")
                 {
                     ApplicationArea = All;

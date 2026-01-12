@@ -76,8 +76,6 @@ codeunit 50005 "ARC Table 36 Subscribers"
             SalesHeader."ARC Expiration Date" := CalcDate(RNASetup."Quote Expiration Calculation", WorkDate);
         end;
         SalesHeader."ARC Created By" := CopyStr(UserId,1,MaxStrLen(SalesHeader."ARC Created By"));
-        if SalesHeader."Document Type" = SalesHeader."Document Type"::Order then
-            SalesHeader.Validate("Requested Delivery Date", CalculateBusinessDaysAfter(SalesHeader."Posting Date",2));
     end;
 
     [EventSubscriber(ObjectType::Table, 36, 'OnBeforeModifyEvent', '', false, false)]
@@ -198,40 +196,22 @@ codeunit 50005 "ARC Table 36 Subscribers"
             TempDimSetEntry.Insert;
         end;
     end;
+
     [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnAfterValidateEvent', 'Sell-to Customer No.', true, true)]
     local procedure "OnAfterValidateEvent_Bill-to Customer No"(VAR Rec : Record "Sales Header";VAR xRec : Record "Sales Header");
     var
         CustomerRec:Record Customer;
     begin
         if Rec."Sell-to Customer No." = xRec."Sell-to Customer No." then
-            exit;
-        if not CustomerRec.Get(Rec."Sell-to Customer No.") then
-            CustomerRec.Init();
-        Rec.Priority_Korber := CustomerRec.Priority_Korber;
+        exit;
+            if CustomerRec.Get(Rec."Sell-to Customer No.") then
+                Rec."Bill-to Territory Code" := CustomerRec."Territory Code";
     end;
-    procedure CalculateBusinessDaysAfter(StartDate: Date; DaysToAdd: Integer): Date
-    var
-        CurrentDate: Date;
-        DaysAdded: Integer;
-        BaseCalenderChange:Record "Base Calendar Change";
+    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnAfterSetFieldsBilltoCustomer', '', true, true)]
+    local procedure OnAfterSetFieldsBilltoCustomer(var SalesHeader: Record "Sales Header";Customer: Record Customer);
     begin
-        CurrentDate := StartDate;
-        DaysAdded := 0;
-
-        while DaysAdded < DaysToAdd do begin
-            CurrentDate := CurrentDate + 1; // Move to the next day
-
-            // Check if the current day is a weekday (Monday to Friday)
-            BaseCalenderChange.Reset();
-            BaseCalenderChange.SetRange(Date,CurrentDate);
-            BaseCalenderChange.SetRange(Nonworking,true);
-            if BaseCalenderChange.IsEmpty() then
-                if (Date2DWY(CurrentDate, 1) in [1, 2, 3, 4, 5]) then
-                    DaysAdded := DaysAdded + 1;
-        end;
-
-        exit(CurrentDate);
-    end;    
+            SalesHeader."Bill-to Territory Code" := Customer."Territory Code";
+    end;
 
     var 
         DimVal: Record "Dimension Value";

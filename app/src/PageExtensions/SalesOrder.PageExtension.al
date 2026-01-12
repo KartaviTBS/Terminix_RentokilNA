@@ -25,17 +25,6 @@ pageextension 50007 "ARC Sales Order" extends "Sales Order"
                     ApplicationArea = All;
                 }
                 
-            }            
-        }
-        addlast(General)
-        {
-            field(Priority_Korber;Priority_Korber)
-            {
-                ApplicationArea = all;
-            }
-            field("Pending Deletion";"Pending Deletion")
-            {
-                ApplicationArea = all;
             }
         }
 
@@ -175,6 +164,29 @@ pageextension 50007 "ARC Sales Order" extends "Sales Order"
         {
             Enabled = false;
         }
+        addafter("Sell-to City")
+        {
+            field("Sell-to Territory Code"; Rec."Sell-to Territory Code")
+            {
+                ApplicationArea = All;
+            }            
+        }
+          addbefore("Location Code")
+        {
+            field("Bill-to Territory Code"; Rec."Bill-to Territory Code")
+            {
+                Enabled = "Bill-to Customer No." <> "Sell-to Customer No.";
+                Editable = "Bill-to Customer No." <> "Sell-to Customer No.";
+                ApplicationArea = All;
+            }            
+        }
+          addafter("Ship-to City")
+        {
+            field("Ship-to Territory Code"; Rec."Ship-to Territory Code")
+            {
+                ApplicationArea = All;
+            }            
+        }
     }
 
     actions
@@ -245,32 +257,6 @@ pageextension 50007 "ARC Sales Order" extends "Sales Order"
                     SalesHeader.SETRANGE("No.", "No.");
                     REPORT.RUNMODAL(50027, true, false, SalesHeader)
                 end;
-            }
-        }        
-        addafter(Documents)
-        {
-            group("2Ship")
-            {
-                Caption = '2 Ship';               
-                action("2Ship Get Edit URL")
-                {
-                    ApplicationArea = All;
-                    Caption = '2Ship Get Edit URL';
-                    Image = Link;
-                    Promoted = true;
-                    PromotedIsBig = true;
-                    PromotedCategory = Process;
-                    
-                    trigger OnAction();
-                    var
-                        ShipIntMgt:Codeunit "2Ship Integration Mgmt.";
-                    begin
-                        ShipIntMgt.Submit2ShipRateShopRequest(Rec,false);
-                        //Rec.Testfield("2Ship Get Edit URL");
-                        CurrPage.Update;
-                        Hyperlink(Rec."2Ship Get Edit URL");
-                    end;
-                }
             }
         }
     }

@@ -286,8 +286,6 @@ codeunit 50083 "ARC eCommerceMgt"
         OrderSource: Record "ARC Order Source";
         SalesHeader: Record "Sales Header";
         SalesLine: Record "Sales Line";
-        EBZTabSalesHdr:Record EBZTabSalesHeader;
-        ccCust:Record EBZTabCustCreditCard;
         NoSeriesMgt: Codeunit NoSeriesManagement;
         mismatchExists: Boolean;
         diffAmt: Decimal;
@@ -319,18 +317,6 @@ codeunit 50083 "ARC eCommerceMgt"
             AppendText(StrSubstNo(text099Lbl,'assigned Sales Header No. ' + SalesHeader."No."));
             SalesHeader.Insert(true);
             SalesHeader.Validate("Sell-to Customer No.",eCommerceEntry."eCom Customer No.");
-            CheckCustCCExists(eCommerceEntry);  
-            IF EBZTabSalesHdr.GET(SalesHeader."Document Type",SalesHeader."No.") THEN begin
-                ccCust.RESET();
-                ccCust.SETFILTER("No.", SalesHeader."Sell-to Customer No.");
-                ccCust.SETRANGE(Default, TRUE);
-                IF ccCust.FINDSET() THEN BEGIN
-                    EBZTabSalesHdr."EBZPayment Id" := ccCust."Payment Method Id";
-                    EBZTabSalesHdr."EBZPayment Card" := ccCust."Credit Card Number";
-                    //EBZTabSalesHdr."EBZLast 4" := eCommerceEntry."eCom. eBiz Last4";                
-                    EBZTabSalesHdr.MODIFY(); 
-                END;           
-            end;
             if eCommerceEntry."eCom Payment Method Code" <> '' then
                 SalesHeader.Validate("Payment Method Code",eCommerceEntry."eCom Payment Method Code");
             if eCommerceEntry."eCom Ship-to Code" <> '' then begin
@@ -616,52 +602,5 @@ codeunit 50083 "ARC eCommerceMgt"
     local procedure OnValidateNoOnCopyFromTempSalesLine(var SalesLine: Record "Sales Line"; var TempSalesLine: Record "Sales Line" temporary)
     begin
         SalesLine."ARC eCommerce Entry No." := TempSalesLine."ARC eCommerce Entry No.";
-    end;
-    local procedure CheckCustCCExists(eCommerceEntry:Record "ARC eCommerce Entry");
-    var
-        EBZTabCustCreditCard:Record EBZTabCustCreditCard;
-        CustomerRec:Record Customer;
-        PaymentIDText:Text[40];
-    begin
-        If (eCommerceEntry."eCom. eBiz Pmt. Token" = '') or (eCommerceEntry."eCom. eBiz Cust. Token" = '') then
-            exit;
-        PaymentIDText := eCommerceEntry."eCom. eBiz Cust. Token" + '~' +eCommerceEntry."eCom. eBiz Pmt. Token";        
-        EBZTabCustCreditCard.Reset();
-        EBZTabCustCreditCard.SetRange("No.",eCommerceEntry."eCom Customer No.");
-        EBZTabCustCreditCard.SetRange("Payment Method Id",PaymentIDText);
-        if EBZTabCustCreditCard.FindFirst then begin
-            EBZTabCustCreditCard.Default := true;   
-            EBZTabCustCreditCard.IsDeleted := false;                     
-            EBZTabCustCreditCard.Modify();
-        end else begin
-            EBZTabCustCreditCard.Init();
-            EBZTabCustCreditCard."CC No.":= EBZTabCustCreditCard."No. Series";
-            EBZTabCustCreditCard."No.":= eCommerceEntry."eCom Customer No.";            
-            CustomerRec.RESET();           
-            CustomerRec.SETFILTER("No.", eCommerceEntry."eCom Customer No.");
-            IF CustomerRec.FINDFIRST THEN BEGIN
-                EBZTabCustCreditCard."Card Holder Name" := CustomerRec.Contact;
-                EBZTabCustCreditCard."Company Name" := CustomerRec.Name;
-                EBZTabCustCreditCard.City := CustomerRec.City;
-                EBZTabCustCreditCard."E-mail" := CustomerRec."E-Mail";
-                EBZTabCustCreditCard.Telephone := CustomerRec."Phone No.";
-                EBZTabCustCreditCard."Zip/Postal Code" := CustomerRec."Post Code";
-                EBZTabCustCreditCard."Country/Region" := CustomerRec."Country/Region Code";
-                EBZTabCustCreditCard."State/Province" := CustomerRec.County;
-                EBZTabCustCreditCard.Street := CustomerRec.Address;
-            END;
-            EBZTabCustCreditCard."Credit Card Number" := 'XXXXXXXXXXXX' + eCommerceEntry."eCom. eBiz Last4";
-            EBZTabCustCreditCard."Payment Method Id" := PaymentIDText;
-            EBZTabCustCreditCard.Default := TRUE;
-            EBZTabCustCreditCard.INSERT(TRUE);
-        end;
-
-        EBZTabCustCreditCard.Reset();
-        EBZTabCustCreditCard.SetRange("No.",eCommerceEntry."eCom Customer No.");
-        EBZTabCustCreditCard.SetFilter("Payment Method Id",'<>%1',PaymentIDText);
-        EBZTabCustCreditCard.SetRange(Default,true);
-        if EBZTabCustCreditCard.FindSet() then
-            EBZTabCustCreditCard.ModifyAll(Default,false);
-
     end;
 }

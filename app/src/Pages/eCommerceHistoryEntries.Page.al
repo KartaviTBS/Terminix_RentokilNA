@@ -198,17 +198,81 @@ page 50094 "ARC eCommerce History Entries"
                                         Rec."Text 07" := CopyStr('eCommerceEntry Filters: ' + eCommerceEntry.GetFilters(),1,MaxStrLen(Rec."Text 07"));
                                         Rec.Insert();
                                     until SalesShptLine.Next() = 0
-                                else
-                                    AppendText(StrSubstNo(text099Lbl,'SalesShptLine.FindSet(false) yielded zero records'));
+                                else begin
+                                    // no sales shpt line recs were found, insert a placeholder record
+                                    entryNo += 1;
+                                    Rec.Init();
+                                    Rec."Entry No." := entryNo;
+                                    Rec."BigInteger 01" := eCommerceEntry."Entry No.";
+                                    Rec."Code 01" := CopyStr(GetRevisedOrderID(eCommerceEntry."eCom Order ID"),1,MaxStrLen(Rec."Code 01"));
+                                    Rec."Date 01" := eCommerceEntry."Created at Date";
+                                    Rec."DateTime 01" := eCommerceEntry."Created at DateTime";
+                                    Rec."BigInteger 02" := OrdTranslEntry."Entry No.";
+                                    Rec."Code 02" := CopyStr(OrdTranslEntry."Document No.",1,MaxStrLen(Rec."Code 02"));
+                                    Rec."Date 02" := OrdTranslEntry."Created at Date";
+                                    Rec."DateTime 02" := OrdTranslEntry."Created at DateTime";
+                                    Rec."Integer 02" := OrdTranslEntry."Document Line No.";
+                                    Rec."Code 03" := CopyStr(OrdTranslEntry."Updated Document No.",1,MaxStrLen(Rec."Code 03"));
+                                    Rec."DateTime 03" := OrdTranslEntry."Released at DateTime";
+                                    Rec."Integer 03" := OrdTranslEntry."Updated Document Line No.";
+                                    Rec."Text 03" := CopyStr(OrdTranslEntry."Updated Location Code",1,MaxStrLen(Rec."Text 03"));
+                                    Rec."Text 04" := CopyStr(SalesShptHeader."Package Tracking No.",1,MaxStrLen(Rec."Text 01"));
+                                    Rec."Code 05" := CopyStr(eCommerceEntry."eCom Type",1,MaxStrLen(Rec."Code 05"));
+                                    Rec."Code 06" := CopyStr(eCommerceEntry."eCom No.",1,MaxStrLen(Rec."Code 06"));
+                                    Rec."Code 07" := CopyStr(eCommerceEntry."eCom Customer No.",1,MaxStrLen(Rec."Code 07"));
+                                    Rec."Date 07" := eCommerceEntry."Created at Date";
+                                    Rec."Text 05" := CopyStr('SalesShptHeader Filters: ' + SalesShptHeader.GetFilters(),1,MaxStrLen(Rec."Text 05"));
+                                    Rec."Text 06" := CopyStr('OrdTranslEntry Filters: ' + OrdTranslEntry.GetFilters(),1,MaxStrLen(Rec."Text 06"));
+                                    Rec."Text 07" := CopyStr('eCommerceEntry Filters: ' + eCommerceEntry.GetFilters(),1,MaxStrLen(Rec."Text 07"));
+                                    Rec.Insert();
+                                end;
                             until SalesShptHeader.Next() = 0
-                        else 
-                            AppendText(StrSubstNo(text099Lbl,'SalesShptHeader.FindSet(false) yielded zero records'));
+                        else begin
+                            // no sales shpt header recs were found, insert a placeholder record
+                            entryNo += 1;
+                            Rec.Init();
+                            Rec."Entry No." := entryNo;
+                            Rec."BigInteger 01" := eCommerceEntry."Entry No.";
+                            Rec."Code 01" := CopyStr(GetRevisedOrderID(eCommerceEntry."eCom Order ID"),1,MaxStrLen(Rec."Code 01"));
+                            Rec."Date 01" := eCommerceEntry."Created at Date";
+                            Rec."DateTime 01" := eCommerceEntry."Created at DateTime";
+                            Rec."BigInteger 02" := OrdTranslEntry."Entry No.";
+                            Rec."Code 02" := CopyStr(OrdTranslEntry."Document No.",1,MaxStrLen(Rec."Code 02"));
+                            Rec."Date 02" := OrdTranslEntry."Created at Date";
+                            Rec."DateTime 02" := OrdTranslEntry."Created at DateTime";
+                            Rec."Integer 02" := OrdTranslEntry."Document Line No.";
+                            Rec."Code 03" := CopyStr(OrdTranslEntry."Updated Document No.",1,MaxStrLen(Rec."Code 03"));
+                            Rec."DateTime 03" := OrdTranslEntry."Released at DateTime";
+                            Rec."Integer 03" := OrdTranslEntry."Updated Document Line No.";
+                            Rec."Text 03" := CopyStr(OrdTranslEntry."Updated Location Code",1,MaxStrLen(Rec."Text 03"));
+                            Rec."Code 05" := CopyStr(eCommerceEntry."eCom Type",1,MaxStrLen(Rec."Code 05"));
+                            Rec."Code 06" := CopyStr(eCommerceEntry."eCom No.",1,MaxStrLen(Rec."Code 06"));
+                            Rec."Code 07" := CopyStr(eCommerceEntry."eCom Customer No.",1,MaxStrLen(Rec."Code 07"));
+                            Rec."Date 07" := eCommerceEntry."Created at Date";
+                            Rec."Text 05" := CopyStr('SalesShptHeader Filters: ' + SalesShptHeader.GetFilters(),1,MaxStrLen(Rec."Text 05"));
+                            Rec."Text 06" := CopyStr('OrdTranslEntry Filters: ' + OrdTranslEntry.GetFilters(),1,MaxStrLen(Rec."Text 06"));
+                            Rec."Text 07" := CopyStr('eCommerceEntry Filters: ' + eCommerceEntry.GetFilters(),1,MaxStrLen(Rec."Text 07"));
+                            Rec.Insert();
+                        end;
                     until OrdTranslEntry.Next() = 0
-                else 
-                    AppendText(StrSubstNo(text099Lbl,'OrdTranslEntry.FindSet(false) yielded zero records'));
-            until eCommerceEntry.Next() = 0
-        else
-            AppendText(StrSubstNo(text099Lbl,'eCommerceEntry.FindSet(false) yielded zero records'));
+                else begin
+                    // no order translation entry recs were found, insert a placeholder record
+                    entryNo += 1;
+                    Rec.Init();
+                    Rec."Entry No." := entryNo;
+                    Rec."BigInteger 01" := eCommerceEntry."Entry No.";
+                    Rec."Code 01" := CopyStr(GetRevisedOrderID(eCommerceEntry."eCom Order ID"),1,MaxStrLen(Rec."Code 01"));
+                    Rec."Date 01" := eCommerceEntry."Created at Date";
+                    Rec."DateTime 01" := eCommerceEntry."Created at DateTime";
+                    Rec."Code 05" := CopyStr(eCommerceEntry."eCom Type",1,MaxStrLen(Rec."Code 05"));
+                    Rec."Code 06" := CopyStr(eCommerceEntry."eCom No.",1,MaxStrLen(Rec."Code 06"));
+                    Rec."Code 07" := CopyStr(eCommerceEntry."eCom Customer No.",1,MaxStrLen(Rec."Code 07"));
+                    Rec."Date 07" := eCommerceEntry."Created at Date";
+                    Rec."Text 06" := CopyStr('OrdTranslEntry Filters: ' + OrdTranslEntry.GetFilters(),1,MaxStrLen(Rec."Text 06"));
+                    Rec."Text 07" := CopyStr('eCommerceEntry Filters: ' + eCommerceEntry.GetFilters(),1,MaxStrLen(Rec."Text 07"));
+                    Rec.Insert();
+                end;
+            until eCommerceEntry.Next() = 0;
         AppendText(StrSubstNo(text099Lbl,'------------------------------------------------------------------------------------------'));
         // remove date filter specified in ODataV4 URI, example:
         //   https://ecommerce-uat.rentokilna.com:8448/DynamicsNAV110-external/ODataV4/Company('TSP_US')/eCommerceHistoryEntries?$filter=dateFilter ge 2023-01-01

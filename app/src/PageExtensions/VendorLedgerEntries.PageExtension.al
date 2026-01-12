@@ -10,10 +10,6 @@ pageextension 50062 "ARC Vendor Ledger Entries" extends "Vendor Ledger Entries"
                 Importance = Promoted;
                 ApplicationArea = Basic, Suite;
             }
-            field("Exported To JDE";"Exported To JDE")
-            {
-                ApplicationArea = Basic, Suite;
-            }
         }
     }
 

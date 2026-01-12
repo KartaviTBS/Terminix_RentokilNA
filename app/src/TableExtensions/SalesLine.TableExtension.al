@@ -119,59 +119,7 @@ tableextension 50007 "ARC SalesLine" extends "Sales Line"
             Caption = 'eCommerce Entry No.';
         }
     }
-    /*
-    procedure InsertFreightLineResource(FreightAmount:Decimal);
-    var
-        ToShipIntSetup: Record "2Ship Integration Setup";
-        SalesLine:Record "Sales Line";
 
-        FreightAmountQuantity:Decimal;
-    begin
-
-        if  FreightAmount = 0 then           
-            EXIT;
-    
-
-        FreightAmountQuantity := 1;
-
-        ToShipIntSetup.GET;
-        ToShipIntSetup.TESTFIELD("Freight Resource No.");
-
-        Rec.TESTFIELD("Document Type");
-        Rec.TESTFIELD("Document No.");
-
-        SalesLine.SETRANGE("Document Type","Document Type");
-        SalesLine.SETRANGE("Document No.","Document No.");
-        
-        SalesLine.SETRANGE(Type,SalesLine.Type::Resource);
-        SalesLine.SETRANGE("No.",ToShipIntSetup."Freight Resource No.");
-        // "Quantity Shipped" will be equal to 0 until FreightAmount line successfully shipped
-        SalesLine.SETRANGE("Quantity Shipped",0);
-        SalesLine.SetRange("Line No.",0);
-        IF SalesLine.FINDFIRST THEN BEGIN
-            SalesLine.SuspendStatusCheck(true);
-            SalesLine.VALIDATE(Quantity,FreightAmountQuantity);
-            SalesLine.VALIDATE("Unit Price",SalesLine."Unit Price" + FreightAmount);
-            SalesLine.MODIFY;
-            SalesLine.SuspendStatusCheck(false);
-        END ELSE BEGIN
-            SalesLine.SETRANGE(Type);
-            SalesLine.SETRANGE("No.");
-            SalesLine.SETRANGE("Quantity Shipped");
-            SalesLine.SetRange("Line No.");
-            SalesLine.FindLast();
-            SalesLine."Line No." += 10000;
-            SalesLine.INIT;
-            SalesLine.SuspendStatusCheck(true);
-            SalesLine.VALIDATE(Type,SalesLine.Type::Resource);
-            SalesLine.VALIDATE("No.",ToShipIntSetup."Freight Resource No.");
-            SalesLine.VALIDATE(Quantity,FreightAmountQuantity);
-            SalesLine.VALIDATE("Unit Price",FreightAmount);
-            SalesLine.INSERT;
-            SalesLine.SuspendStatusCheck(false);
-        end;
-    end;
-    */
     var 
         SalesMgt: Codeunit ARCSalesMgt;
         ItemSupplCharge: Record "ARC Item Supplemental Charge";

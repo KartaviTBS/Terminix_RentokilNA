@@ -14,10 +14,6 @@ pageextension 50001 "ARC Item Card" extends "Item Card"
                 Importance = Additional;
                 ToolTip = 'Enables the item for Adobe Commerce';
             }
-            field("Updated In 2Ship";"Updated In 2Ship")
-            {
-                ApplicationArea = all;
-            }
         }
         addafter("Item Category Code")
         {

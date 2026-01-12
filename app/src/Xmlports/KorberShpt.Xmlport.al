@@ -40,7 +40,7 @@ xmlport 50103 "ARC KorberShpt"
             textelement(ShipDateRequired) { }
             //textelement(ShipTimeRequired) { }
             //textelement(TruckRoute) { }
-            textelement(Priority) { }
+            //textelement(Priority) { }
             textelement(ShipmentPaymentType) { }
             textelement(ShipViaPreferred) { }
             //textelement(ShipPayAccountNumber) { }
@@ -508,8 +508,6 @@ xmlport 50103 "ARC KorberShpt"
         // change ShipCompleteOnly based on wkshop Wed 26 Oct 2022 - default s/b false - s/b true if Shipping Advice is Complete
         if _SalesHeader."Shipping Advice" = _SalesHeader."Shipping Advice"::Complete then
             ShipCompleteOnly := CopyStr('true',1,MaxStrLen(ShipCompleteOnly));
-        //SK1.0 
-        Priority := CopyStr(KorberMgt.GetStripText(_SalesHeader.Priority_Korber),1,MaxStrLen(Priority));
         // line fields
         TempBuf.FindSet(true);
         repeat

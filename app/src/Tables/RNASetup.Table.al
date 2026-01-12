@@ -337,26 +337,6 @@ table 50000 "ARC RNA Setup"
         {
             DataClassification = CustomerContent;
         }
-        field(50202; "JDE GL Export File Path"; Text[250])
-        {
-            Caption = 'JDE GL Export File Path';
-        }
-        field(50203; "JDE Last Export File Name"; Text[250])
-        {
-            Caption = 'JDE GL Last Export File Name';
-        }
-        field(50204;"JDE AP Export File Path";Text[250])
-        {
-          Caption = 'JDE AP Export File Path';
-        }
-        field(50205; "JDE AP Last Export File Name"; Text[250])
-        {
-            Caption = 'JDE AP Last Export File Name';
-        }
-        field(50206; "Disable Batch Deletion_OrdMgt";Boolean)
-        {
-            Caption = 'Disable Batch Deletion Process';
-        }  
     }
 
     keys

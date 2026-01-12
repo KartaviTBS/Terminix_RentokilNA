@@ -50,33 +50,4 @@ pageextension 50075 "ARC Sales Return Order" extends "Sales Return Order"
             Enabled = false;
         }
     }
-    actions
-    {
-        addafter(EDI)
-        {
-            group("2Ship")
-            {
-                Caption = '2 Ship';               
-                action("2Ship Get Edit URL")
-                {
-                    ApplicationArea = All;
-                    Caption = '2Ship Return Get Edit URL';
-                    Image = Link;
-                    Promoted = true;
-                    PromotedIsBig = true;
-                    PromotedCategory = Process;
-                    
-                    trigger OnAction();
-                    var
-                        ShipIntMgt:Codeunit "2Ship Integration Mgmt.";
-                    begin
-                        ShipIntMgt.Submit2ShipRateShopRequest(Rec,true);
-                        //Rec.Testfield("2Ship Get Edit URL");
-                        CurrPage.Update;
-                        Hyperlink(Rec."2Ship Get Edit URL");
-                    end;
-                }
-            }
-        }        
-    }
 }

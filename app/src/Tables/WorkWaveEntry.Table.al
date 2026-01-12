@@ -173,10 +173,6 @@ table 50050 "ARC Workwave Entry"
             Clustered = true;
         }
         key(Process; Process, Processed, "Sales Order No.") { }
-        key(Key2; "Sales Order No.", "Transaction Status")
-{
-    MaintainSQLIndex = true;
-}
     }
 
     trigger OnInsert();
