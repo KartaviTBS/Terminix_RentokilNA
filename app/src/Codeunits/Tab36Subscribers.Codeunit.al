@@ -198,6 +198,7 @@ codeunit 50005 "ARC Table 36 Subscribers"
             TempDimSetEntry.Insert;
         end;
     end;
+
     [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnAfterValidateEvent', 'Sell-to Customer No.', true, true)]
     local procedure "OnAfterValidateEvent_Bill-to Customer No"(VAR Rec : Record "Sales Header";VAR xRec : Record "Sales Header");
     var
@@ -207,7 +208,15 @@ codeunit 50005 "ARC Table 36 Subscribers"
             exit;
         if not CustomerRec.Get(Rec."Sell-to Customer No.") then
             CustomerRec.Init();
+        Rec."Bill-to Territory Code" := CustomerRec."Territory Code";
         Rec.Priority_Korber := CustomerRec.Priority_Korber;
+
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Sales Header", 'OnAfterSetFieldsBilltoCustomer', '', true, true)]
+    local procedure OnAfterSetFieldsBilltoCustomer(var SalesHeader: Record "Sales Header";Customer: Record Customer);
+    begin
+            SalesHeader."Bill-to Territory Code" := Customer."Territory Code";
     end;
     procedure CalculateBusinessDaysAfter(StartDate: Date; DaysToAdd: Integer): Date
     var

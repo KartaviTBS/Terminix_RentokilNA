@@ -62,7 +62,10 @@ codeunit 50066 "Export GL Details to JDE TEST"
         GenLedSetup.Get();
         GLEntry.Reset;
         GLEntry.SETCURRENTKEY("Transaction No.", "Posting Date");
-        GLEntry.SETFILTER("Posting Date", '>=%1', DMY2Date(14,11,24));
+        if (GenLedSetup."Allow Posting From" > DMY2Date(01,07,24)) and (GenLedSetup."Allow Posting To" <> 0D) then
+            GLEntry.SetRange("Posting Date",GenLedSetup."Allow Posting From",GenLedSetup."Allow Posting To")
+        else
+            GLEntry.SETFILTER("Posting Date", '>=%1', DMY2Date(01,07,24));
         GLEntry.SETRANGE(GLEntry."Exported To JDE", FALSE);
         CountVar := GLEntry.Count;
         GLEntry.SetFilter(Amount,'<0');
@@ -100,7 +103,10 @@ codeunit 50066 "Export GL Details to JDE TEST"
         GLEntry.LOCKTABLE;
         GLEntry.Reset();
         GLEntry.SETCURRENTKEY("Transaction No.", "Posting Date");
-        GLEntry.SETFILTER("Posting Date", '>=%1', DMY2Date(14,11,24));
+        if (GenLedSetup."Allow Posting From" > DMY2Date(01,07,24)) and (GenLedSetup."Allow Posting To" <> 0D) then
+            GLEntry.SetRange("Posting Date",GenLedSetup."Allow Posting From",GenLedSetup."Allow Posting To")
+        else
+            GLEntry.SETFILTER("Posting Date", '>=%1', DMY2Date(01,07,24));
         GLEntry.SETRANGE(GLEntry."Exported To JDE", FALSE);
         IF GLEntry.FIND('-') THEN
             REPEAT

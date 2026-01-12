@@ -123,11 +123,12 @@ tableextension 50001 "ARC Item" extends Item
             Caption = 'APL';
             Editable = false;
         }
-        field(50043;"ARC Ranking Code";Code[20])
-        {
-            Caption = 'Ranking Code';
-            TableRelation = "ARC Ranking Code";
-        }
+       
+       field(50043;"ARC Ranking Code";Code[20])
+       {
+           Caption = 'Ranking Code';
+           TableRelation = "ARC Ranking Code";
+       }
         field(50061; "ARC Agency Code"; code[20])
         {
             Caption = 'Agency Code';

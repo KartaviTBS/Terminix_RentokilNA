@@ -697,6 +697,7 @@ codeunit 50104 "ARC KorberRcptMgt"
         _PurchaseHeader.SetHideValidationDialog(true);
         _PurchaseHeader.LockTable();
         _PurchaseHeader.Get(_KorberRcptEntry."Document Type",_KorberRcptEntry."Document No.");
+        _ReleasePurchaseDoc.SetSkipCheckReleaseRestrictions(); //SK1.0
         _ReleasePurchaseDoc.Run(_PurchaseHeader);
         // post document
         WriteDiagText(StrSubstNo(_Text099Lbl,'preparing to post'));

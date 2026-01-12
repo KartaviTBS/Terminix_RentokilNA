@@ -188,4 +188,27 @@ codeunit 50006 "ARC Table 37 Subscribers"
             end;
         end;      
     end;
+
+    /*
+    [EventSubscriber(ObjectType::Table, 37, 'OnAfterValidateEvent', 'Quantity', false, false)]
+    local procedure OnAfterValidateQuantity(var Rec: Record "Sales Line"; var xRec: Record "Sales Line"; CurrFieldNo: Integer)
+    var
+        SalesHeader: Record "Sales Header";
+        PromoMgt: Codeunit "ARC Promotion Management";
+    begin
+        if Rec."Document Type" <> Rec."Document Type"::Order then
+            exit;
+
+        if Rec.Quantity = 0 then
+            exit;
+
+        if Rec.Quantity = xRec.Quantity then
+            exit;
+
+        if not SalesHeader.Get(Rec."Document Type", Rec."Document No.") then
+            exit;
+            
+        PromoMgt.ApplyPromotion(SalesHeader,Rec,CurrFieldNo);
+    end;
+    */
 }

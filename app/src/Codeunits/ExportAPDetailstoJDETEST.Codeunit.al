@@ -9,6 +9,8 @@ codeunit 50067 "Export AP Details to JDE TEST"
         TotalAmount:Decimal;
     begin
         PPSetup.GET('');
+        GLSetup.Get();
+        LCYCurr := COPYSTR(GLSetup."LCY Code", 1, 3);
         PPSetup.TESTFIELD("JDE AP Export File Path");
         PPSetup.TESTFIELD("JDE AP Last Export File Name");
 
@@ -180,9 +182,8 @@ codeunit 50067 "Export AP Details to JDE TEST"
                     TaxID := '999999999';
                 END;
 
-
                 VLE.CALCFIELDS("Remaining Amount", "Remaining Amt. (LCY)");
-                IF VLE."Currency Code" <> '' THEN
+                IF VLE."Currency Code" <> '' THEN begin
                     TransAmount :=
                       ROUND(
                         CurrExchRate.ExchangeAmtFCYToFCY(
@@ -190,10 +191,13 @@ codeunit 50067 "Export AP Details to JDE TEST"
                           VLE."Currency Code",
                           Vendor."Currency Code",
                           VLE."Remaining Amount"),
-                        Currency."Amount Rounding Precision")
-                ELSE
+                        Currency."Amount Rounding Precision");                    
+                    FCYCurr :=  COPYSTR(VLE."Currency Code", 1, 3);
+                end ELSE begin
                     TransAmount := VLE."Remaining Amt. (LCY)";
-
+                    FCYCurr := LCYCurr;
+                end;
+                TransAmountFCY := TransAmount;
 
 
                 ExportFile.WRITE(
@@ -230,7 +234,10 @@ codeunit 50067 "Export AP Details to JDE TEST"
                          BankRoutingNumber + '|' +                    //Bank Routing Number
                          '' + '|' +                                   //Checking or Saving Account          always blank
                          COPYSTR(BankAccountName, 1, 30) + '|' +   //Bank Name
-                         COPYSTR(Email, 1, 256));             //Email Address
+                         COPYSTR(Email, 1, 3) + '|' +            //Email Address
+                         COPYSTR(LCYCurr, 1, 3) + '|' +          //Base Currency
+                         COPYSTR(FCYCurr, 1, 3) + '|' +          //Payment Currency
+                         FORMAT(-TransAmountFCY));                //Transaction Amount Foreign
 
                 ExportFile.WRITE(
                         'D' + '|' + '0' +                                   //Format Designator
@@ -295,6 +302,7 @@ codeunit 50067 "Export AP Details to JDE TEST"
         WCText001: Label 'ON ACCOUNT';
         WCText002: Label 'Customers have not been setup for Exporting';
         PPSetup: Record "ARC RNA Setup";
+        GLSetup: Record "General Ledger Setup";
         FileName: Text[250];
         VLE: Record 25;
         PurchInvoice: Record 122;
@@ -343,6 +351,9 @@ codeunit 50067 "Export AP Details to JDE TEST"
         BankAccountName: Text[50];
         VendPostCode: Code[10];
         TransAmount: Decimal;
+        LCYCurr:Code[5];
+        FCYCurr:Code[5];
+        TransAmountFCY: Decimal;
 
     [Scope('Internal')]
     procedure MapPaymentTerms(PymntTerms: Code[10]): Code[10]

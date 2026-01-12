@@ -25,6 +25,8 @@ codeunit 50037 "ARC Codeunit 414 Subscribers"
     var
         _OrderMgt: Codeunit "ARC OrderManagement";
     begin
+        SalesHeader.CalcFields("Pending Deletion");
+        SalesHeader.TestField("Pending Deletion",false);
         // SOW11 Körber Edge WMS Integration - _OrderMgt.OnBeforeReleaseSalesDocCustom contains PreflightRoutinesBeforeRelease
         _OrderMgt.OnBeforeReleaseSalesDocCustom(SalesHeader,PreviewMode,IsHandled);
     end;

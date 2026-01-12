@@ -11,4 +11,5 @@ pageextension 50065 "ARC Shipping Agent" extends "Shipping Agent"
             }
         }
     }
+    actions { }
 }

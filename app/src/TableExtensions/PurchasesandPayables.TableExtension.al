@@ -34,6 +34,7 @@ tableextension 50062 "ARC Purchases & Payables Setup" extends "Purchases & Payab
             
         }
 
+
     }
 
     var

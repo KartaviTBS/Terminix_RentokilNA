@@ -37,7 +37,7 @@ pageextension 50007 "ARC Sales Order" extends "Sales Order"
             {
                 ApplicationArea = all;
             }
-        }
+        }        
 
         addafter("Sell-to Customer Name")
         {

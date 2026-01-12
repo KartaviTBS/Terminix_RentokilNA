@@ -27,6 +27,22 @@ pageextension 50053 "ARC Posted Sales Invoice" extends "Posted Sales Invoice"
             }
             
         }
+           addafter("Sell-to City")
+        {
+            field("Sell-to Territory Code"; Rec."Sell-to Territory Code")
+            {
+                ApplicationArea = All;
+            }            
+        }
+          addbefore("Location Code")
+        {
+            field("Bill-to Territory Code"; Rec."Bill-to Territory Code")
+            {
+                Enabled = "Bill-to Customer No." <> "Sell-to Customer No.";
+                Editable = "Bill-to Customer No." <> "Sell-to Customer No.";
+                ApplicationArea = All;
+            }            
+        }
     }
 
        actions

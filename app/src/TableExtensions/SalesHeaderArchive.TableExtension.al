@@ -64,6 +64,27 @@ tableextension 50031 "ARC Sales Header Archive" extends "Sales Header Archive"
             Caption = 'AR Hold';
             Editable = false;
         }
+        field(50012;"Sell-to Territory Code";Code[10])
+        {
+            Caption = 'Territory Code';
+            Description = 'RENT.SK.01';
+            TableRelation = Territory;
+            Editable = false;        
+        }
+        field(50013;"Bill-to Territory Code";Code[10])
+        {
+            Caption = 'Territory Code';
+            Description = 'RENT.SK.01';
+            TableRelation = Territory;
+            Editable = false;
+        }
+        field(50014;"Ship-to Territory Code";Code[10])
+        {
+            Caption = 'Territory Code';
+            Description = 'RENT.SK.01';
+            TableRelation = Territory;
+            Editable = false;
+        }
         field(50053; "ARC Order Source Code"; Code[20])
         {
             DataClassification = CustomerContent;

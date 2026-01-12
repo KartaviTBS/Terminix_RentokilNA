@@ -28,9 +28,8 @@ codeunit 50030 "ARC RNA Format Address"
                 AddrArray, "Ship-from Name", "Ship-from Name 2", "Ship-from Contact", "Ship-from Address",
                 "Ship-from Address 2",
                 "Ship-from City", "Ship-from Post Code", "Ship-from County", "Ship-from Country/Region Code");
+                //"Ship-to City", "Ship-to Post Code", "Ship-to County", "Ship-to Country/Region Code");
     end;
-
-
 
     procedure SalesOrderShipTo(var AddrArray: array[8] of Text[100]; var SalesHeader: Record "Sales Header");
     var
@@ -92,7 +91,6 @@ codeunit 50030 "ARC RNA Format Address"
             FormatAddress.FormatAddr(
                 AddrArray, "Transfer-from Name", "Transfer-from Name 2", "Transfer-from Contact", "Transfer-from Address",
             "Transfer-from Address 2", "Transfer-from City", "Transfer-from Post Code", "Transfer-from County", "Trsf.-from Country/Region Code");
-            //"Transfer-from Address 2", "Transfer-to City", "Transfer-to Post Code", "Transfer-to County", "Trsf.-to Country/Region Code");
 
     end;
 

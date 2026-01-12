@@ -19,6 +19,7 @@ page 50033 "ARC Price Entry List"
                     ApplicationArea = All;
                     Editable = false;
                 }
+                
                 field("Entity Type"; Rec."Entity Type")
                 {
                     ApplicationArea = All;
@@ -171,6 +172,9 @@ page 50033 "ARC Price Entry List"
                         XMLPORT.Run(XMLPORT::"ARC Price Entry Import", false, true);                        
                     end;
                 }
+               
         }
     }
+   
+    
 }

@@ -110,7 +110,7 @@ page 50038 "ARC Promotion Entry List"
                 field("Discount Amount"; Rec."Discount Amount")
                 {
                     ApplicationArea = All;
-                }
+                }                
                 field("Promotion 1 Item No."; Rec."Promotion 1 Item No.")
                 {
                     ApplicationArea = All;
@@ -147,7 +147,6 @@ page 50038 "ARC Promotion Entry List"
                 {
                     ApplicationArea = All;
                 }
-               
                 field("Promotion 1 Max Value"; Rec."Promotion 1 Max Value")
                 {
                     ApplicationArea = All;
